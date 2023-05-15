@@ -1,6 +1,7 @@
 package com.gabor.pizzas
 
 import android.app.Application
+import com.gabor.pizzas.di.dataModule
 import com.gabor.pizzas.di.networkModule
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
@@ -15,6 +16,7 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 networkModule,
+                dataModule,
             )
         }
 
