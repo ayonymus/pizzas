@@ -1,33 +1,27 @@
 package com.gabor.pizzas.presentation.order
 
-import android.text.method.TextKeyListener.clear
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gabor.pizzas.domain.model.Pizza
-import com.gabor.pizzas.domain.usecase.CalculatePizzaPriceUseCase
-import com.gabor.pizzas.domain.usecase.CreateHalfPizzaUseCase
 import com.gabor.pizzas.domain.usecase.FetchPizzasUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.selects.select
 import timber.log.Timber
 
 class PizzaOrderViewModel(
-    private val fetchPizzasUseCase: FetchPizzasUseCase,
-    private val createHalfPizzaUseCase: CreateHalfPizzaUseCase,
-    private val calculatePizzaPriceUseCase: CalculatePizzaPriceUseCase
+    private val fetchPizzasUseCase: FetchPizzasUseCase
 ) : ViewModel() {
 
     private val _orderFlow = MutableStateFlow(PizzaOrderUiState(isLoading = true))
     val orderFlow: StateFlow<PizzaOrderUiState> = _orderFlow
 
     fun handleIntent(intent: PizzaOrderIntent) {
+        Timber.d(intent.toString())
         when (intent) {
             is PizzaOrderIntent.Fetch -> fetch()
             is PizzaOrderIntent.Select -> selectPizza(intent.pizza)
-            is PizzaOrderIntent.AddHalf -> addHalf(intent.pizza)
             is PizzaOrderIntent.Clear -> clearSelection()
         }
     }
@@ -37,21 +31,23 @@ class PizzaOrderViewModel(
             _orderFlow.update {
                 it.copy(
                     selectedPizza1 = null,
-                    selectedPizza2 = null
+                    selectedPizza2 = null,
+                    addSecondFlavor = false
                 )
             }
         }
     }
 
-    private fun addHalf(pizza: Pizza) {
-        viewModelScope.launch {
-            _orderFlow.update { it.copy(selectedPizza2 = pizza) }
-        }
-    }
-
     private fun selectPizza(selected: Pizza) {
         viewModelScope.launch {
-            _orderFlow.update { it.copy(selectedPizza1 = selected) }
+            _orderFlow.update { state ->
+                if (state.selectedPizza1 == null) {
+                    state.copy(selectedPizza1 = selected)
+                } else {
+                    state.copy(selectedPizza2 = selected)
+
+                }
+            }
         }
     }
 
@@ -63,6 +59,7 @@ class PizzaOrderViewModel(
     }
 
     private suspend fun handleResult(result: Result<List<Pizza>>) {
+        Timber.d(result.toString())
         result.fold(
             onSuccess = { data ->
                 _orderFlow.update {
@@ -83,15 +80,7 @@ class PizzaOrderViewModel(
             }
         )
     }
-
 }
-
-private suspend fun MutableStateFlow<PizzaOrderUiState>.update(
-    action: (PizzaOrderUiState) -> PizzaOrderUiState
-) {
-    this.emit(action(this.value))
-}
-
 
 data class PizzaOrderUiState(
     val hasErrors: Boolean = false,
@@ -99,13 +88,11 @@ data class PizzaOrderUiState(
     val availablePizzaList: List<Pizza> = emptyList(),
     val selectedPizza1: Pizza? = null,
     val selectedPizza2: Pizza? = null,
-    val selectedName: String = ""
+    val addSecondFlavor: Boolean = false
 )
 
 sealed class PizzaOrderIntent {
-    data class Fetch(val refresh: Boolean = false) : PizzaOrderIntent()
+    object Fetch : PizzaOrderIntent()
     data class Select(val pizza: Pizza) : PizzaOrderIntent()
-    data class AddHalf(val pizza: Pizza) : PizzaOrderIntent()
     object Clear : PizzaOrderIntent()
-
 }

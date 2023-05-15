@@ -3,6 +3,7 @@ package com.gabor.pizzas
 import android.app.Application
 import com.gabor.pizzas.di.dataModule
 import com.gabor.pizzas.di.networkModule
+import com.gabor.pizzas.di.presentationModule
 import com.gabor.pizzas.di.useCaseModule
 import org.koin.android.BuildConfig
 import org.koin.android.ext.koin.androidContext
@@ -18,12 +19,13 @@ class App : Application() {
             modules(
                 networkModule,
                 dataModule,
-                useCaseModule
+                useCaseModule,
+                presentationModule
             )
         }
 
-        if (BuildConfig.DEBUG) {
+        //if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-        }
+        //}
     }
 }

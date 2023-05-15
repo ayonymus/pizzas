@@ -18,6 +18,6 @@ val dataModule = module {
 fun providePizzaRepository(local: LocalDataSource<List<Pizza>>, remote: RemoteDataSource<List<Pizza>>) =
     object : CachingRepository<List<Pizza>>(local, remote) { }
 
-fun provideLocalPizzaSource() = PizzaLocalDataSource()
+fun provideLocalPizzaSource(): LocalDataSource<List<Pizza>>  = PizzaLocalDataSource()
 
-fun provideRemotePizzaSource(api: PizzaApi) = PizzaRemoteDataSource(api)
+fun provideRemotePizzaSource(api: PizzaApi): RemoteDataSource<List<Pizza>> = PizzaRemoteDataSource(api)

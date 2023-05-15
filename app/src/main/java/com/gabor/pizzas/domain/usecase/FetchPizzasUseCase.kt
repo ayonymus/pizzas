@@ -6,6 +6,5 @@ import com.gabor.pizzas.domain.model.Pizza
 class FetchPizzasUseCase(
    private val repository: CachingRepository<List<Pizza>>
 ) {
-
-    suspend operator fun invoke() = repository.fetchData(false)
+    suspend operator fun invoke() = repository.fetchData(true)
 }

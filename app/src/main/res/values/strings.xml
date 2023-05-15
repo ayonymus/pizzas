@@ -31,4 +31,12 @@
         nulla. Donec rhoncus libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus vestibulum. Fusce dictum
         libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="select">Select</string>
+    <string name="select_a_pizza">Select a pizza</string>
+    <string name="select_another">Add another flavor</string>
+    <string name="select_flavor">Pick a flavor</string>
+    <string name="order">Order</string>
+    <string name="clear">Clear</string>
+    <string name="order_summary">Summary</string>
+    <string name="total">Total:</string>
 </resources>

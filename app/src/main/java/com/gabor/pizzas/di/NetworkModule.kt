@@ -42,7 +42,7 @@ fun provideRetrofit(
     okHttpClient: OkHttpClient,
     gsonConverterFactory: GsonConverterFactory
 ): Retrofit = Retrofit.Builder()
-    .baseUrl(" http://static.mozio.com/")
+    .baseUrl(" https://static.mozio.com/")
     .client(okHttpClient)
     .addConverterFactory(gsonConverterFactory)
     .build()
